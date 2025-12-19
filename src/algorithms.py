@@ -91,3 +91,18 @@ class MarketBasketAnalyser:
                     queue.append((neighbor, depth + 1))
         
         return list(recommendations)
+
+    def get_top_n_items(self, n=10):
+        """Returns the names of the top N most frequent items."""
+        nodes = self.graph.get_all_nodes()
+        
+        # Sort logic: 
+        # Primary Key: Count (Descending) -> represented as -x[1]
+        # Secondary Key: Name (Ascending/Alphabetical) -> represented as x[0]
+        # This ensures 'Beer' (2) always beats 'Diapers' (2) because B < D.
+        ranked = sorted(
+            [(node, self.graph.get_node_frequency(node)) for node in nodes],
+            key=lambda x: (-x[1], x[0])
+        )
+        
+        return [item[0] for item in ranked[:n]]

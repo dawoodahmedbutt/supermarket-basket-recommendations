@@ -110,7 +110,7 @@ class TestMarketBasketAnalyser(unittest.TestCase):
         """
         
         # Ask for Top 3
-        top_items = self.analyzer.get_top_n_items(n=3)
+        top_items = self.analyser.get_top_n_items(n=3)
         
         # Expectation: ['milk', 'bread', 'beer'] 
         
