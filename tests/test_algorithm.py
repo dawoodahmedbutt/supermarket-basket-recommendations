@@ -104,6 +104,22 @@ class TestMarketBasketAnalyser(unittest.TestCase):
         # Ensure the start node is filtered out
         self.assertNotIn('gin', recommendations)
 
+    def test_get_top_n_items(self):
+        """
+        Test that we can correctly identify the top N high-volume items.
+        """
+        
+        # Ask for Top 3
+        top_items = self.analyzer.get_top_n_items(n=3)
+        
+        # Expectation: ['milk', 'bread', 'beer'] 
+        
+        self.assertEqual(len(top_items), 3)
+        self.assertEqual(top_items[0], 'milk')  # 5 sales
+        self.assertEqual(top_items[1], 'bread') # 3 sales
+        
+        # Verify the list contains the expected items
+        self.assertIn('beer', top_items)
 
 if __name__ == '__main__':
     unittest.main()
