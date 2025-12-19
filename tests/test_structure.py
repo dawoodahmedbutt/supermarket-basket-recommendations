@@ -48,5 +48,26 @@ class TestMarketBasketGraph(unittest.TestCase):
         self.assertIn('butter', neighbors)
         self.assertEqual(neighbors['bread'], 1)
 
+    def test_get_node_frequency(self):
+        """Test that the graph counts the total occurrences of specific items."""
+        # Transaction 1: Milk and Bread
+        self.graph.add_transaction(['milk', 'bread'])
+        
+        # Transaction 2: Milk and Eggs
+        self.graph.add_transaction(['milk', 'eggs'])
+        
+        # Transaction 3: Just Milk 
+        self.graph.add_transaction(['milk'])
+
+        # Milk appeared in 3 transactions total
+        self.assertEqual(self.graph.get_node_frequency('milk'), 3)
+        
+        # Bread only appeared in 1
+        self.assertEqual(self.graph.get_node_frequency('bread'), 1)
+        
+        # gold has never been bought
+        self.assertEqual(self.graph.get_node_frequency('gold'), 0)
+
+
 if __name__ == '__main__':
     unittest.main()
