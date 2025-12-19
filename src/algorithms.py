@@ -1,3 +1,5 @@
+from collections import deque
+
 class MarketBasketAnalyser:
     def __init__(self, graph):
         self.graph = graph
@@ -60,3 +62,32 @@ class MarketBasketAnalyser:
             for j in range(0, n - i - 1):
                 if items[j][1] < items[j + 1][1]:
                     items[j], items[j + 1] = items[j + 1], items[j]
+
+
+    # BFS traversal
+    def get_bfs_recommendations(self, start_item, max_depth=2):
+        """
+        Uses Breadth-First Search (BFS) to find related items up to `max_depth` hops away.
+        """
+        visited = set()
+        queue = deque([(start_item, 0)])  
+        visited.add(start_item)
+        
+        recommendations = set()
+
+        while queue:
+            current_node, depth = queue.popleft()
+            
+            if depth >= max_depth:
+                continue
+            
+            # Get neighbors from the graph
+            neighbors = self.graph.get_neighbors(current_node)
+            
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    recommendations.add(neighbor)
+                    queue.append((neighbor, depth + 1))
+        
+        return list(recommendations)

@@ -92,10 +92,10 @@ class TestMarketBasketAnalyser(unittest.TestCase):
         g.add_transaction(['gin', 'tonic'])
         g.add_transaction(['tonic', 'lemons'])
         
-        analyzer = MarketBasketAnalyser(g)
+        analyser = MarketBasketAnalyser(g)
         
         # Get items within 2 hops of Gin
-        recommendations = analyzer.get_bfs_recommendations('gin', max_depth=2)
+        recommendations = analyser.get_bfs_recommendations('gin', max_depth=2)
         
         # Recommendations should contain Lemons (depth 2) and Tonic (depth 1)
         self.assertIn('lemons', recommendations)

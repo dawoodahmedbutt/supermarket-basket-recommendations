@@ -2,79 +2,65 @@ import os
 from src.loader import DataLoader
 from src.data_structure import MarketBasketGraph
 from src.algorithms import MarketBasketAnalyser
+from src.visualisation import GraphVisualiser
 
 def main():
-    # Configuration
     FILE_PATH = os.path.join('data', 'Supermarket_dataset_PAI.csv')
     
     print("="*50)
-    print("MARKET BASKET ANALYSIS TOOL ")
+    print("     MARKET BASKET ANALYSIS TOOL (Task 2)")
     print("="*50)
 
-    # Load Data
-    print(f"\n[1] Loading data from {FILE_PATH}...")
+    # Load & Build
+    print(f"\n[1] Loading data...")
     loader = DataLoader(FILE_PATH)
     transactions = loader.load_transactions()
     
     if not transactions:
-        print("Error: No transactions found. Check your file path.")
         return
 
-    print(f"-> Successfully loaded {len(transactions)} transactions.")
-
-    # Build Graph
-    print("\n[2] Building Graph Structure...")
     graph = MarketBasketGraph()
     for t in transactions:
         graph.add_transaction(t)
     
-    print(f"-> Graph built with {len(graph.get_all_nodes())} unique items.")
-    print(f"-> Total items processed: {graph.total_items_purchased}")
+    analyser = MarketBasketAnalyser(graph)
 
-    # 3. Analyze
-    analyzer = MarketBasketAnalyser(graph)
-
-    # Q1: Top Bundles 
+    # Q1 & Q2
     print("\n" + "-"*40)
-    print("Q1: Top 3 Most Common Product Bundles")
+    print("Q1: Top 3 Bundles (Global)")
     print("-" * 40)
-    top_bundles = analyzer.get_top_bundles(n=3)
-    for rank, (pair, count) in enumerate(top_bundles, 1):
-        print(f"   {rank}. {pair[0]} + {pair[1]} (Bought together {count} times)")
+    top = analyser.get_top_bundles(3)
+    for pair, count in top:
+        print(f"   {pair[0]} + {pair[1]}: {count}")
 
-    # Q2: Recommendations for a Specific Item
-    target_item = 'whole milk' # Common item in the dataset
+    target = 'yogurt' 
     print("\n" + "-"*40)
-    print(f"Q2: Frequent Co-purchases with '{target_item}'")
+    print(f"Q2: Associations for '{target}'")
     print("-" * 40)
-    associations = analyzer.get_frequent_associations(target_item)
-    for item, count in associations[:3]:
-        print(f"   -> Customers who buy '{target_item}' also buy '{item}' ({count} times)")
+    assoc = analyser.get_frequent_associations(target)
+    for item, count in assoc[:3]:
+        print(f"   {item} (Bought together {count} times)")
 
-    # Q3: Probability/Confidence
+    # BFS Recommendation 
     print("\n" + "-"*40)
-    print("Q3: Strategic Insights")
+    print(f"Q4: BFS Recommendations for '{target}'")
+    print("    (Finding indirect connections 2 hops away)")
     print("-" * 40)
     
-    # Insight A: Most Sold
-    best_item, best_count = analyzer.get_most_sold_item()
-    print(f"   [Volume Driver] Best Selling Item: '{best_item}' ({best_count} sales)")
+    bfs_recs = analyser.get_bfs_recommendations(target, max_depth=2)
+    # Filter out immediate neighbors to show new discoveries
+    direct_neighbors = [x[0] for x in assoc]
+    indirect = [item for item in bfs_recs if item not in direct_neighbors and item != target]
     
-    # Insight B: Basket Size
-    avg_size = analyzer.get_average_basket_size()
-    print(f"   [Store Layout] Average Basket Size: {avg_size:.2f} items")
-    
-    # Insight C: Confidence Rule
-    # "If they buy Whole Milk, how likely are they to buy Bread?"
-    item_a = 'whole milk'
-    item_b = 'rolls/buns' # Adjust based on data results
-    confidence = analyzer.calculate_confidence(item_a, item_b)
-    print(f" [Promotion] Confidence Rule: P({item_b} | {item_a}) = {confidence*100:.1f}%")
-    print(f" (Meaning: {confidence*100:.1f}% of people who buy {item_a} also buy {item_b})")
+    print(f"   Found {len(indirect)} indirect connections. Top samples:")
+    print(f"   {indirect[:5]}")
 
-    print("\n" + "="*50)
-    print("Analysis Complete.")
-    print("="*50)
+    # Visualisation
+    print("\n" + "-"*40)
+    print("[5] Generating Graph Plot...")
+    vis = GraphVisualiser(graph)
+    # filter edges < 100 co-occurrences to keep the plot readable
+    vis.plot_top_associations(min_weight=100, output_file="market_graph.png")
 
 if __name__ == "__main__":
     main()
