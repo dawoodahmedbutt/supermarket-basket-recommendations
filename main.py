@@ -1,18 +1,18 @@
+"""Market Basket Analysis — entry point."""
 import os
 from src.loader import DataLoader
 from src.data_structure import MarketBasketGraph
 from src.algorithms import MarketBasketAnalyser
 from src.visualisation import GraphVisualiser
 
+FILE_PATH = os.path.join('data', 'Supermarket_dataset_PAI.csv')
+TARGET_ITEM = 'yogurt'
+
 def main():
-    # --- Configuration ---
-    FILE_PATH = os.path.join('data', 'Supermarket_dataset_PAI.csv')
-    
     print("="*50)
-    print("     MARKET BASKET ANALYSIS TOOL (Task 2)")
+    print("       MARKET BASKET ANALYSIS TOOL")
     print("="*50)
 
-    # 1. Load Data
     print(f"\n[1] Loading data...")
     loader = DataLoader(FILE_PATH)
     transactions = loader.load_transactions()
@@ -21,16 +21,13 @@ def main():
         print("Error: No transactions found.")
         return
 
-    # 2. Build Graph
     graph = MarketBasketGraph()
     for t in transactions:
         graph.add_transaction(t)
-    
-    # 3. Initialise Analyser & Visualiser
+
     analyser = MarketBasketAnalyser(graph)
     vis = GraphVisualiser(graph)
 
-    # Q1: Top Bundles
     print("\n" + "-"*40)
     print("Q1: Top 5 Bundles (Global)")
     print("-" * 40)
@@ -38,18 +35,15 @@ def main():
     for pair, count in top_bundles:
         print(f"   {pair[0]} + {pair[1]}: {count}")
 
-    # Q2: Direct Recommendations
-    target_item = 'yogurt' # can change this to any item
     print("\n" + "-"*40)
-    print(f"Q2: Associations for '{target_item}'")
+    print(f"Q2: Associations for '{TARGET_ITEM}'")
     print("-" * 40)
-    associations = analyser.get_frequent_associations(target_item)
+    associations = analyser.get_frequent_associations(TARGET_ITEM)
     for item, count in associations[:3]:
         print(f"   {item} (Bought together {count} times)")
 
-    # Q3: Strategic Insights 
     print("\n" + "-"*40)
-    print("Q3: Strategic Insights (Data-Driven Decisions)")
+    print("Q3: Strategic Insights")
     print("-" * 40)
     
     best_item, best_count = analyser.get_most_sold_item()
@@ -69,13 +63,12 @@ def main():
         else:
             print(f"      {i}. Driver: '{driver}' -> (No niche partner found)")
 
-    # Q4: BFS Recommendations
     print("\n" + "-"*40)
-    print(f"Q4: BFS Recommendations for '{target_item}'")
+    print(f"Q4: BFS Recommendations for '{TARGET_ITEM}'")
     print("    (Finding 'Hidden' Connections 2 hops away)")
     print("-" * 40)
-    
-    niche_recs = analyser.get_niche_bfs_recommendations(target_item, max_depth=2)
+
+    niche_recs = analyser.get_niche_bfs_recommendations(TARGET_ITEM, max_depth=2)
     
     print(f"   Context: Analysis removed 'Mega Hubs' to find niche clusters.")
     print(f"   Found {len(niche_recs)} niche connections. Top samples:")

@@ -1,29 +1,25 @@
 from collections import defaultdict
 import itertools
 
+
 class MarketBasketGraph:
     def __init__(self):
         self.graph = defaultdict(lambda: defaultdict(int))
         self.nodes = set()
         self.node_counts = defaultdict(int)
-        
-        # Tracking for Average Basket Size
         self.total_transactions = 0
         self.total_items_purchased = 0
 
     def add_transaction(self, items):
         unique_items = sorted(list(set(items)))
-        
-        # Update Globals
+
         self.total_transactions += 1
         self.total_items_purchased += len(unique_items)
-        
-        # Update Node Counts
+
         for item in unique_items:
             self.nodes.add(item)
             self.node_counts[item] += 1
-        
-        # Update Edges
+
         for item1, item2 in itertools.combinations(unique_items, 2):
             self._add_edge(item1, item2)
 

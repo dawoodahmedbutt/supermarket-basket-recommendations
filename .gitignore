@@ -1,11 +1,17 @@
-# Python Internals
+# Python
 __pycache__/
 *.pyc
+*.pyo
 
-# Mac OS
+# macOS
 .DS_Store
+._*
 
 # Environments
 venv/
 .venv/
 env/
+
+# Generated outputs (re-run main.py to regenerate)
+market_graph_global.png
+report_images/
