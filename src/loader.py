@@ -1,3 +1,5 @@
+"""CSV loading utilities for supermarket transaction data."""
+
 import csv
 from collections import defaultdict
 

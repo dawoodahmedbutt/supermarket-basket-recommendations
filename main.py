@@ -8,6 +8,7 @@ from src.visualisation import GraphVisualiser
 FILE_PATH = os.path.join('data', 'Supermarket_dataset_PAI.csv')
 TARGET_ITEM = 'yogurt'
 
+
 def main():
     print("="*50)
     print("       MARKET BASKET ANALYSIS TOOL")
@@ -16,7 +17,7 @@ def main():
     print(f"\n[1] Loading data...")
     loader = DataLoader(FILE_PATH)
     transactions = loader.load_transactions()
-    
+
     if not transactions:
         print("Error: No transactions found.")
         return
@@ -45,17 +46,17 @@ def main():
     print("\n" + "-"*40)
     print("Q3: Strategic Insights")
     print("-" * 40)
-    
+
     best_item, best_count = analyser.get_most_sold_item()
     print(f"   [Volume Driver] Best Selling Item: '{best_item}' ({best_count} sales)")
-    
+
     avg_size = analyser.get_average_basket_size()
     print(f"   [Store Layout] Average Basket Size: {avg_size:.2f} items")
-    
+
     print(f"\n   [Promotion] Top Cross-Sell Opportunities (Smart Filtered):")
-    
+
     opportunities = analyser.get_strategic_cross_sells(top_n=5)
-    
+
     for i, (driver, partner, conf) in enumerate(opportunities, 1):
         if partner:
             print(f"      {i}. Driver: '{driver}' -> Promote: '{partner}'")
@@ -69,31 +70,31 @@ def main():
     print("-" * 40)
 
     niche_recs = analyser.get_niche_bfs_recommendations(TARGET_ITEM, max_depth=2)
-    
+
     print(f"   Context: Analysis removed 'Mega Hubs' to find niche clusters.")
     print(f"   Found {len(niche_recs)} niche connections. Top samples:")
     print(f"   {niche_recs[:5]}")
 
-    # VISUALISATION 1: Global 
+    # VISUALISATION 1: Global
     print("\n" + "-"*40)
     print("[5] Generating Global Network Plot...")
     vis.plot_top_associations(min_weight=50, output_file="market_graph_global.png")
 
-    # VISUALISATION 2: Top 10 Ego Graphs 
+    # VISUALISATION 2: Top 10 Ego Graphs
     print("\n" + "-"*40)
     print("[6] Generating Strategic Visualisation Report (Top 10 Items)")
     print("-" * 40)
-    
+
     if not os.path.exists('report_images'):
         os.makedirs('report_images')
-        
+
     top_10 = analyser.get_top_n_items(10)
     print(f"   Generating analysis for: {top_10}")
-    
+
     for rank, item in enumerate(top_10, 1):
         safe_name = item.replace('/', '_')
         filename = f"report_images/rank_{rank}_{safe_name}.png"
-        
+
         print(f"   -> Ego Graph saved: {filename}")
         vis.plot_ego_graph(item, filename)
 

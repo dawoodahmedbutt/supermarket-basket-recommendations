@@ -1,3 +1,5 @@
+"""NetworkX and Matplotlib visualisations for the market-basket graph."""
+
 import networkx as nx
 import matplotlib.pyplot as plt
 

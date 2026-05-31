@@ -1,3 +1,5 @@
+"""Weighted graph data structure for market-basket transactions."""
+
 from collections import defaultdict
 import itertools
 
@@ -37,7 +39,8 @@ class MarketBasketGraph:
         return dict(self.graph[node])
 
     def get_all_nodes(self):
-        return list(self.nodes)
+        """Return nodes in a stable order for reproducible rankings and plots."""
+        return sorted(self.nodes)
 
     def get_node_frequency(self, node):
         return self.node_counts.get(node, 0)

@@ -11,7 +11,3 @@ __pycache__/
 venv/
 .venv/
 env/
-
-# Generated outputs (re-run main.py to regenerate)
-market_graph_global.png
-report_images/

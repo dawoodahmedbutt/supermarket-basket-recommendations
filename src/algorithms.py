@@ -1,3 +1,5 @@
+"""Analysis algorithms for the market-basket co-purchase graph."""
+
 from collections import deque
 
 
@@ -9,7 +11,7 @@ class MarketBasketAnalyser:
         """Q1: Top product bundles (Bubble Sort)."""
         all_edges = []
         processed = set()
-        
+
         nodes = self.graph.get_all_nodes()
         for node in nodes:
             neighbors = self.graph.get_neighbors(node)
@@ -18,7 +20,7 @@ class MarketBasketAnalyser:
                 if pair not in processed:
                     all_edges.append((pair, weight))
                     processed.add(pair)
-        
+
         self._bubble_sort_descending(all_edges)
         return all_edges[:n]
 
@@ -32,7 +34,8 @@ class MarketBasketAnalyser:
     def calculate_confidence(self, item_a, item_b):
         """Q3: P(B|A) - Confidence."""
         count_a = self.graph.get_node_frequency(item_a)
-        if count_a == 0: return 0.0
+        if count_a == 0:
+            return 0.0
         return self.graph.get_edge_weight(item_a, item_b) / count_a
 
     def get_most_sold_item(self):
